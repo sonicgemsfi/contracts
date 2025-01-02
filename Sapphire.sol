@@ -3,9 +3,10 @@
 * https://www.sonicgems.fi/
 */
 
-// SPDX-License-Identifier: MIT    
+// SPDX-License-Identifier: MIT
+// File: Sonicgems/lib/openzeppelin-contracts/contracts/GSN/Context.sol
 
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity ^0.6.0;
 
 /*
  * @dev Provides information about the current execution context, including the
@@ -28,12 +29,11 @@ abstract contract Context {
     }
 }
 
-
-// File @openzeppelin/contracts/token/ERC20/IERC20.sol@v3.4.2
-
+// File: Sonicgems/lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol
 
 
-pragma solidity >=0.6.0 <0.8.0;
+
+pragma solidity ^0.6.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -109,12 +109,11 @@ interface IERC20 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-
-// File @openzeppelin/contracts/math/SafeMath.sol@v3.4.2
-
+// File: Sonicgems/lib/openzeppelin-contracts/contracts/math/SafeMath.sol
 
 
-pragma solidity >=0.6.0 <0.8.0;
+
+pragma solidity ^0.6.0;
 
 /**
  * @dev Wrappers over Solidity's arithmetic operations with added overflow
@@ -131,62 +130,6 @@ pragma solidity >=0.6.0 <0.8.0;
  */
 library SafeMath {
     /**
-     * @dev Returns the addition of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryAdd(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        uint256 c = a + b;
-        if (c < a) return (false, 0);
-        return (true, c);
-    }
-
-    /**
-     * @dev Returns the substraction of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function trySub(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        if (b > a) return (false, 0);
-        return (true, a - b);
-    }
-
-    /**
-     * @dev Returns the multiplication of two unsigned integers, with an overflow flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryMul(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
-        // benefit is lost if 'b' is also tested.
-        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
-        if (a == 0) return (true, 0);
-        uint256 c = a * b;
-        if (c / a != b) return (false, 0);
-        return (true, c);
-    }
-
-    /**
-     * @dev Returns the division of two unsigned integers, with a division by zero flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryDiv(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        if (b == 0) return (false, 0);
-        return (true, a / b);
-    }
-
-    /**
-     * @dev Returns the remainder of dividing two unsigned integers, with a division by zero flag.
-     *
-     * _Available since v3.4._
-     */
-    function tryMod(uint256 a, uint256 b) internal pure returns (bool, uint256) {
-        if (b == 0) return (false, 0);
-        return (true, a % b);
-    }
-
-    /**
      * @dev Returns the addition of two unsigned integers, reverting on
      * overflow.
      *
@@ -199,6 +142,7 @@ library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
         require(c >= a, "SafeMath: addition overflow");
+
         return c;
     }
 
@@ -213,8 +157,24 @@ library SafeMath {
      * - Subtraction cannot overflow.
      */
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b <= a, "SafeMath: subtraction overflow");
-        return a - b;
+        return sub(a, b, "SafeMath: subtraction overflow");
+    }
+
+    /**
+     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
+     * overflow (when the result is negative).
+     *
+     * Counterpart to Solidity's `-` operator.
+     *
+     * Requirements:
+     *
+     * - Subtraction cannot overflow.
+     */
+    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b <= a, errorMessage);
+        uint256 c = a - b;
+
+        return c;
     }
 
     /**
@@ -228,14 +188,21 @@ library SafeMath {
      * - Multiplication cannot overflow.
      */
     function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        if (a == 0) return 0;
+        // Gas optimization: this is cheaper than requiring 'a' not being zero, but the
+        // benefit is lost if 'b' is also tested.
+        // See: https://github.com/OpenZeppelin/openzeppelin-contracts/pull/522
+        if (a == 0) {
+            return 0;
+        }
+
         uint256 c = a * b;
         require(c / a == b, "SafeMath: multiplication overflow");
+
         return c;
     }
 
     /**
-     * @dev Returns the integer division of two unsigned integers, reverting on
+     * @dev Returns the integer division of two unsigned integers. Reverts on
      * division by zero. The result is rounded towards zero.
      *
      * Counterpart to Solidity's `/` operator. Note: this function uses a
@@ -247,51 +214,12 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b > 0, "SafeMath: division by zero");
-        return a / b;
+        return div(a, b, "SafeMath: division by zero");
     }
 
     /**
-     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * reverting when dividing by zero.
-     *
-     * Counterpart to Solidity's `%` operator. This function uses a `revert`
-     * opcode (which leaves remaining gas untouched) while Solidity uses an
-     * invalid opcode to revert (consuming all remaining gas).
-     *
-     * Requirements:
-     *
-     * - The divisor cannot be zero.
-     */
-    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b > 0, "SafeMath: modulo by zero");
-        return a % b;
-    }
-
-    /**
-     * @dev Returns the subtraction of two unsigned integers, reverting with custom message on
-     * overflow (when the result is negative).
-     *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {trySub}.
-     *
-     * Counterpart to Solidity's `-` operator.
-     *
-     * Requirements:
-     *
-     * - Subtraction cannot overflow.
-     */
-    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b <= a, errorMessage);
-        return a - b;
-    }
-
-    /**
-     * @dev Returns the integer division of two unsigned integers, reverting with custom message on
+     * @dev Returns the integer division of two unsigned integers. Reverts with custom message on
      * division by zero. The result is rounded towards zero.
-     *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {tryDiv}.
      *
      * Counterpart to Solidity's `/` operator. Note: this function uses a
      * `revert` opcode (which leaves remaining gas untouched) while Solidity
@@ -303,15 +231,31 @@ library SafeMath {
      */
     function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
         require(b > 0, errorMessage);
-        return a / b;
+        uint256 c = a / b;
+        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+
+        return c;
     }
 
     /**
      * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
-     * reverting with custom message when dividing by zero.
+     * Reverts when dividing by zero.
      *
-     * CAUTION: This function is deprecated because it requires allocating memory for the error
-     * message unnecessarily. For custom revert reasons use {tryMod}.
+     * Counterpart to Solidity's `%` operator. This function uses a `revert`
+     * opcode (which leaves remaining gas untouched) while Solidity uses an
+     * invalid opcode to revert (consuming all remaining gas).
+     *
+     * Requirements:
+     *
+     * - The divisor cannot be zero.
+     */
+    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
+        return mod(a, b, "SafeMath: modulo by zero");
+    }
+
+    /**
+     * @dev Returns the remainder of dividing two unsigned integers. (unsigned integer modulo),
+     * Reverts with custom message when dividing by zero.
      *
      * Counterpart to Solidity's `%` operator. This function uses a `revert`
      * opcode (which leaves remaining gas untouched) while Solidity uses an
@@ -322,19 +266,158 @@ library SafeMath {
      * - The divisor cannot be zero.
      */
     function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
-        require(b > 0, errorMessage);
+        require(b != 0, errorMessage);
         return a % b;
     }
 }
 
-
-// File @openzeppelin/contracts/token/ERC20/ERC20.sol@v3.4.2
-
+// File: Sonicgems/lib/openzeppelin-contracts/contracts/utils/Address.sol
 
 
-pragma solidity >=0.6.0 <0.8.0;
 
+pragma solidity ^0.6.2;
 
+/**
+ * @dev Collection of functions related to the address type
+ */
+library Address {
+    /**
+     * @dev Returns true if `account` is a contract.
+     *
+     * [IMPORTANT]
+     * ====
+     * It is unsafe to assume that an address for which this function returns
+     * false is an externally-owned account (EOA) and not a contract.
+     *
+     * Among others, `isContract` will return false for the following
+     * types of addresses:
+     *
+     *  - an externally-owned account
+     *  - a contract in construction
+     *  - an address where a contract will be created
+     *  - an address where a contract lived, but was destroyed
+     * ====
+     */
+    function isContract(address account) internal view returns (bool) {
+        // According to EIP-1052, 0x0 is the value returned for not-yet created accounts
+        // and 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470 is returned
+        // for accounts without code, i.e. `keccak256('')`
+        bytes32 codehash;
+        bytes32 accountHash = 0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470;
+        // solhint-disable-next-line no-inline-assembly
+        assembly { codehash := extcodehash(account) }
+        return (codehash != accountHash && codehash != 0x0);
+    }
+
+    /**
+     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to
+     * `recipient`, forwarding all available gas and reverting on errors.
+     *
+     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost
+     * of certain opcodes, possibly making contracts go over the 2300 gas limit
+     * imposed by `transfer`, making them unable to receive funds via
+     * `transfer`. {sendValue} removes this limitation.
+     *
+     * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].
+     *
+     * IMPORTANT: because control is transferred to `recipient`, care must be
+     * taken to not create reentrancy vulnerabilities. Consider using
+     * {ReentrancyGuard} or the
+     * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].
+     */
+    function sendValue(address payable recipient, uint256 amount) internal {
+        require(address(this).balance >= amount, "Address: insufficient balance");
+
+        // solhint-disable-next-line avoid-low-level-calls, avoid-call-value
+        (bool success, ) = recipient.call{ value: amount }("");
+        require(success, "Address: unable to send value, recipient may have reverted");
+    }
+
+    /**
+     * @dev Performs a Solidity function call using a low level `call`. A
+     * plain`call` is an unsafe replacement for a function call: use this
+     * function instead.
+     *
+     * If `target` reverts with a revert reason, it is bubbled up by this
+     * function (like regular Solidity function calls).
+     *
+     * Returns the raw returned data. To convert to the expected return value,
+     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].
+     *
+     * Requirements:
+     *
+     * - `target` must be a contract.
+     * - calling `target` with `data` must not revert.
+     *
+     * _Available since v3.1._
+     */
+    function functionCall(address target, bytes memory data) internal returns (bytes memory) {
+      return functionCall(target, data, "Address: low-level call failed");
+    }
+
+    /**
+     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`], but with
+     * `errorMessage` as a fallback revert reason when `target` reverts.
+     *
+     * _Available since v3.1._
+     */
+    function functionCall(address target, bytes memory data, string memory errorMessage) internal returns (bytes memory) {
+        return _functionCallWithValue(target, data, 0, errorMessage);
+    }
+
+    /**
+     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],
+     * but also transferring `value` wei to `target`.
+     *
+     * Requirements:
+     *
+     * - the calling contract must have an ETH balance of at least `value`.
+     * - the called Solidity function must be `payable`.
+     *
+     * _Available since v3.1._
+     */
+    function functionCallWithValue(address target, bytes memory data, uint256 value) internal returns (bytes memory) {
+        return functionCallWithValue(target, data, value, "Address: low-level call with value failed");
+    }
+
+    /**
+     * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but
+     * with `errorMessage` as a fallback revert reason when `target` reverts.
+     *
+     * _Available since v3.1._
+     */
+    function functionCallWithValue(address target, bytes memory data, uint256 value, string memory errorMessage) internal returns (bytes memory) {
+        require(address(this).balance >= value, "Address: insufficient balance for call");
+        return _functionCallWithValue(target, data, value, errorMessage);
+    }
+
+    function _functionCallWithValue(address target, bytes memory data, uint256 weiValue, string memory errorMessage) private returns (bytes memory) {
+        require(isContract(target), "Address: call to non-contract");
+
+        // solhint-disable-next-line avoid-low-level-calls
+        (bool success, bytes memory returndata) = target.call{ value: weiValue }(data);
+        if (success) {
+            return returndata;
+        } else {
+            // Look for revert reason and bubble it up if present
+            if (returndata.length > 0) {
+                // The easiest way to bubble the revert reason is using memory via assembly
+
+                // solhint-disable-next-line no-inline-assembly
+                assembly {
+                    let returndata_size := mload(returndata)
+                    revert(add(32, returndata), returndata_size)
+                }
+            } else {
+                revert(errorMessage);
+            }
+        }
+    }
+}
+
+// File: Sonicgems/lib/openzeppelin-contracts/contracts/token/ERC20/ERC20.sol
+
+pragma solidity ^0.6.0;
 
 /**
  * @dev Implementation of the {IERC20} interface.
@@ -362,6 +445,7 @@ pragma solidity >=0.6.0 <0.8.0;
  */
 contract ERC20 is Context, IERC20 {
     using SafeMath for uint256;
+    using Address for address;
 
     mapping (address => uint256) private _balances;
 
@@ -382,16 +466,16 @@ contract ERC20 is Context, IERC20 {
      * All three of these values are immutable: they can only be set once during
      * construction.
      */
-    constructor (string memory name_, string memory symbol_) public {
-        _name = name_;
-        _symbol = symbol_;
+    constructor (string memory name, string memory symbol) public {
+        _name = name;
+        _symbol = symbol;
         _decimals = 18;
     }
 
     /**
      * @dev Returns the name of the token.
      */
-    function name() public view virtual returns (string memory) {
+    function name() public view returns (string memory) {
         return _name;
     }
 
@@ -399,7 +483,7 @@ contract ERC20 is Context, IERC20 {
      * @dev Returns the symbol of the token, usually a shorter version of the
      * name.
      */
-    function symbol() public view virtual returns (string memory) {
+    function symbol() public view returns (string memory) {
         return _symbol;
     }
 
@@ -416,21 +500,21 @@ contract ERC20 is Context, IERC20 {
      * no way affects any of the arithmetic of the contract, including
      * {IERC20-balanceOf} and {IERC20-transfer}.
      */
-    function decimals() public view virtual returns (uint8) {
+    function decimals() public view returns (uint8) {
         return _decimals;
     }
 
     /**
      * @dev See {IERC20-totalSupply}.
      */
-    function totalSupply() public view virtual override returns (uint256) {
+    function totalSupply() public view override returns (uint256) {
         return _totalSupply;
     }
 
     /**
      * @dev See {IERC20-balanceOf}.
      */
-    function balanceOf(address account) public view virtual override returns (uint256) {
+    function balanceOf(address account) public view override returns (uint256) {
         return _balances[account];
     }
 
@@ -470,10 +554,9 @@ contract ERC20 is Context, IERC20 {
      * @dev See {IERC20-transferFrom}.
      *
      * Emits an {Approval} event indicating the updated allowance. This is not
-     * required by the EIP. See the note at the beginning of {ERC20}.
+     * required by the EIP. See the note at the beginning of {ERC20};
      *
      * Requirements:
-     *
      * - `sender` and `recipient` cannot be the zero address.
      * - `sender` must have a balance of at least `amount`.
      * - the caller must have allowance for ``sender``'s tokens of at least
@@ -551,7 +634,7 @@ contract ERC20 is Context, IERC20 {
      *
      * Emits a {Transfer} event with `from` set to the zero address.
      *
-     * Requirements:
+     * Requirements
      *
      * - `to` cannot be the zero address.
      */
@@ -571,7 +654,7 @@ contract ERC20 is Context, IERC20 {
      *
      * Emits a {Transfer} event with `to` set to the zero address.
      *
-     * Requirements:
+     * Requirements
      *
      * - `account` cannot be the zero address.
      * - `account` must have at least `amount` tokens.
@@ -587,9 +670,9 @@ contract ERC20 is Context, IERC20 {
     }
 
     /**
-     * @dev Sets `amount` as the allowance of `spender` over the `owner` s tokens.
+     * @dev Sets `amount` as the allowance of `spender` over the `owner`s tokens.
      *
-     * This internal function is equivalent to `approve`, and can be used to
+     * This is internal function is equivalent to `approve`, and can be used to
      * e.g. set automatic allowances for certain subsystems, etc.
      *
      * Emits an {Approval} event.
@@ -614,7 +697,7 @@ contract ERC20 is Context, IERC20 {
      * applications that interact with token contracts will not expect
      * {decimals} to ever change, and may work incorrectly if it does.
      */
-    function _setupDecimals(uint8 decimals_) internal virtual {
+    function _setupDecimals(uint8 decimals_) internal {
         _decimals = decimals_;
     }
 
@@ -635,12 +718,12 @@ contract ERC20 is Context, IERC20 {
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual { }
 }
 
-
-// File @openzeppelin/contracts/token/ERC20/ERC20Burnable.sol@v3.4.2
-
+// File: Sonicgems/lib/openzeppelin-contracts/contracts/token/ERC20/ERC20Burnable.sol
 
 
-pragma solidity >=0.6.0 <0.8.0;
+
+pragma solidity ^0.6.0;
+
 
 
 /**
@@ -649,8 +732,6 @@ pragma solidity >=0.6.0 <0.8.0;
  * recognized off-chain (via event analysis).
  */
 abstract contract ERC20Burnable is Context, ERC20 {
-    using SafeMath for uint256;
-
     /**
      * @dev Destroys `amount` tokens from the caller.
      *
@@ -679,12 +760,11 @@ abstract contract ERC20Burnable is Context, ERC20 {
     }
 }
 
-
-// File @openzeppelin/contracts/math/Math.sol@v3.4.2
-
+// File: Sonicgems/lib/openzeppelin-contracts/contracts/math/Math.sol
 
 
-pragma solidity >=0.6.0 <0.8.0;
+
+pragma solidity ^0.6.0;
 
 /**
  * @dev Standard math utilities missing in the Solidity language.
@@ -714,8 +794,7 @@ library Math {
     }
 }
 
-
-// File contracts/lib/SafeMath8.sol
+// File: Sonicgems/src/lib/SafeMath8.sol
 
 
 
@@ -877,11 +956,11 @@ library SafeMath8 {
     }
 }
 
+// File: Sonicgems/lib/openzeppelin-contracts/contracts/access/Ownable.sol
 
 
-// File @openzeppelin/contracts/access/Ownable.sol@v3.4.2
 
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity ^0.6.0;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -895,7 +974,7 @@ pragma solidity >=0.6.0 <0.8.0;
  * `onlyOwner`, which can be applied to your functions to restrict their use to
  * the owner.
  */
-abstract contract Ownable is Context {
+contract Ownable is Context {
     address private _owner;
 
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -912,7 +991,7 @@ abstract contract Ownable is Context {
     /**
      * @dev Returns the address of the current owner.
      */
-    function owner() public view virtual returns (address) {
+    function owner() public view returns (address) {
         return _owner;
     }
 
@@ -920,7 +999,7 @@ abstract contract Ownable is Context {
      * @dev Throws if called by any account other than the owner.
      */
     modifier onlyOwner() {
-        require(owner() == _msgSender(), "Ownable: caller is not the owner");
+        require(_owner == _msgSender(), "Ownable: caller is not the owner");
         _;
     }
 
@@ -947,10 +1026,12 @@ abstract contract Ownable is Context {
     }
 }
 
+// File: Sonicgems/src/owner/Operator.sol
 
-// File contracts/owner/Operator.sol
+
 
 pragma solidity 0.6.12;
+
 
 
 contract Operator is Context, Ownable {
@@ -987,8 +1068,9 @@ contract Operator is Context, Ownable {
     }
 }
 
+// File: Sonicgems/src/interfaces/IOracle.sol
 
-// File contracts/interfaces/IOracle.sol
+
 
 pragma solidity 0.6.12;
 
@@ -1000,31 +1082,42 @@ interface IOracle {
     function twap(address _token, uint256 _amountIn) external view returns (uint144 _amountOut);
 }
 
+// File: Sonicgems/src/Sapphire.sol
 
-contract SonicGems is ERC20Burnable, Operator {
+
+
+pragma solidity 0.6.12;
+
+/*
+
+    http://sonicgems.fi
+*/
+contract Sapphire is ERC20Burnable, Operator {
     using SafeMath8 for uint8;
     using SafeMath for uint256;
 
     // Initial distribution for the first 24h genesis pools
-    uint256 public constant INITIAL_GENESIS_POOL_DISTRIBUTION = 10000 ether;
-    // Genesis LP
-    uint256 public constant INITIAL_SAPPHIRE_POOL_DISTRIBUTION = 25000 ether;
+    uint256 public constant INITIAL_GENESIS_POOL_DISTRIBUTION = 25000 ether;
 
     // Have the rewards been distributed to the pools
     bool public rewardPoolDistributed = false;
 
+    // Address of the Oracle
     address public sapphireOracle;
 
     /**
      * @notice Constructs the SAPPHIRE ERC-20 contract.
      */
-    constructor() public ERC20("SonicGems Token", "SAPPHIRE") {
-        // Mints 1 SAPPHIRE to contract creator for initial pool setup
-        _mint(msg.sender, 100 ether);   
+    constructor() public ERC20("Sonicgems Token", "SAPPHIRE") {
+        // Mints 100 SAPPHIRE to contract creator for initial pool setup
+
+        _mint(msg.sender, 100 ether);
     }
 
     function _getSapphirePrice() internal view returns (uint256 _sapphirePrice) {
-        try IOracle(sapphireOracle).consult(address(this), 1e18) returns (uint144 _price) {
+        try IOracle(sapphireOracle).consult(address(this), 1e18) returns (
+            uint144 _price
+        ) {
             return uint256(_price);
         } catch {
             revert("Sapphire: failed to fetch SAPPHIRE price from Oracle");
@@ -1032,7 +1125,10 @@ contract SonicGems is ERC20Burnable, Operator {
     }
 
     function setSapphireOracle(address _sapphireOracle) public onlyOperator {
-        require(_sapphireOracle != address(0), "oracle address cannot be 0 address");
+        require(
+            _sapphireOracle != address(0),
+            "oracle address cannot be 0 address"
+        );
         sapphireOracle = _sapphireOracle;
     }
 
@@ -1042,7 +1138,10 @@ contract SonicGems is ERC20Burnable, Operator {
      * @param amount_ The amount of SAPPHIRE to mint to
      * @return whether the process has been done
      */
-    function mint(address recipient_, uint256 amount_) public onlyOperator returns (bool) {
+    function mint(
+        address recipient_,
+        uint256 amount_
+    ) public onlyOperator returns (bool) {
         uint256 balanceBefore = balanceOf(recipient_);
         _mint(recipient_, amount_);
         uint256 balanceAfter = balanceOf(recipient_);
@@ -1054,7 +1153,10 @@ contract SonicGems is ERC20Burnable, Operator {
         super.burn(amount);
     }
 
-    function burnFrom(address account, uint256 amount) public override onlyOperator {
+    function burnFrom(
+        address account,
+        uint256 amount
+    ) public override onlyOperator {
         super.burnFrom(account, amount);
     }
 
@@ -1064,23 +1166,26 @@ contract SonicGems is ERC20Burnable, Operator {
         uint256 amount
     ) public override returns (bool) {
         _transfer(sender, recipient, amount);
-        _approve(sender, _msgSender(), allowance(sender, _msgSender()).sub(amount, "ERC20: transfer amount exceeds allowance"));
+
+        _approve(
+            sender,
+            _msgSender(),
+            allowance(sender, _msgSender()).sub(
+                amount,
+                "ERC20: transfer amount exceeds allowance"
+            )
+        );
         return true;
     }
 
     /**
      * @notice distribute to reward pool (only once)
      */
-    function distributeReward(
-        address _genesisPool,
-        address _sapphirePool
-    ) external onlyOperator {
+    function distributeReward(address _genesisPool) external onlyOperator {
         require(!rewardPoolDistributed, "only can distribute once");
         require(_genesisPool != address(0), "!_genesisPool");
-        require(_sapphirePool != address(0), "!_sapphirePool");
         rewardPoolDistributed = true;
         _mint(_genesisPool, INITIAL_GENESIS_POOL_DISTRIBUTION);
-        _mint(_sapphirePool, INITIAL_SAPPHIRE_POOL_DISTRIBUTION);
     }
 
     function governanceRecoverUnsupported(
